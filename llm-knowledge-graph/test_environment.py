@@ -2,7 +2,7 @@
 # correctly and that the OpenAI and Neo4j connections are working.
 import os
 import unittest
-
+from openai import OpenAI, AuthenticationError
 from dotenv import load_dotenv, find_dotenv
 load_dotenv()
 
@@ -43,7 +43,7 @@ class TestEnvironment(unittest.TestCase):
         if TestEnvironment.skip_openai_test:
             self.skipTest("Skipping OpenAI test")
 
-        from openai import OpenAI, AuthenticationError
+        
 
         llm = OpenAI()
         

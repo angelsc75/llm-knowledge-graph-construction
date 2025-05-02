@@ -7,6 +7,21 @@ from langchain_neo4j import Neo4jGraph
 from langchain_community.graphs.graph_document import Node, Relationship
 
 from dotenv import load_dotenv
+
+'''Restricting the nodes and relationship will result in a more concise
+knowledge graph. A more concise graph may support you in answering specific
+questions but it could also be missing information. Information could be missing
+because the model will only generate nodes and relationships that are allowed.
+
+Currently, the LLM will only extract the nodes and relationships from the text. You can also
+instruct it to include properties for the nodes and relationships by specifying the properties 
+parameter.
+
+Specifying properties will result in nodes and relationships with additional meta data. 
+The properties will only be present if the LLM can generate them from the text provided.
+
+In this example, a name and description property will be added if the values can be 
+determined from the text.'''
 load_dotenv()
 
 ARTICLES_REQUIRED = [6,8,22]
@@ -20,7 +35,7 @@ def create_kg():
 
     llm = ChatOpenAI(
         openai_api_key=os.getenv('OPENAI_API_KEY'), 
-        # temperature=0, 
+        temperature=0, 
         # model_name="gpt-4-turbo"
         model_name="gpt-3.5-turbo"
     )
@@ -33,7 +48,9 @@ def create_kg():
 
     article_transformer = LLMGraphTransformer(
         llm=llm,
-        # allowed_nodes=["Person", "Organization", "Location", "Outcome", "Event", "Object"],
+        allowed_nodes=["Person", "Organization", "Location", "Outcome", "Event", "Object"],
+        allowed_relationships=["USES", "HAS", "IS", "AT", "KNOWS"],
+        node_properties=["name", "description"],
         )
 
     article_num = -1
